@@ -28,6 +28,7 @@ CLOUDINARY_API_SECRET
 
 ---
 ## Note
+## create route & controller for /post (16:10)
 
 
 

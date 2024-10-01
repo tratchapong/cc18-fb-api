@@ -1,7 +1,6 @@
 require('dotenv').config()
+const prisma = require('../models')
 
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
 
 async function run() {
 	await prisma.$executeRawUnsafe('DROP DATABASE cc18_fakebook')
