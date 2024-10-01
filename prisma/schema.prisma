@@ -17,6 +17,56 @@ model User {
   profileImage  String?
   coverImage    String?
   createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @updatedAt @db.Timestamp(0)
-  
+  updatedAt     DateTime    @updatedAt @db.Timestamp(0) 
+  posts         Post[] 
+  comments      Comment[]
+  likes         Like[]
+}
+
+model Post {
+  id            Int         @id @default(autoincrement())
+  message       String?     @db.Text
+  image         String?
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime    @updatedAt @db.Timestamp(0)  
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  comments      Comment[]
+  likes         Like[]
+}
+
+model Comment {
+  id            Int         @id @default(autoincrement())
+  message       String      @db.Text
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime    @updatedAt @db.Timestamp(0)  
+  userId        Int
+  postId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  post          Post        @relation(fields: [postId], references: [id])
+}
+
+model Like {
+  userId        Int
+  postId        Int
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+  user          User        @relation(fields: [userId], references: [id])
+  post          Post        @relation(fields: [postId], references: [id])
+  @@id([userId, postId])
+}
+
+enum RelationshipStatus {
+  PENDING
+  ACCEPTED
+}
+
+model Relationship {
+  id            Int         @id @default(autoincrement())
+  status        RelationshipStatus   @default(PENDING)
+  createdAt     DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt     DateTime    @updatedAt @db.Timestamp(0) 
+  senderId      Int
+  receiverId    Int
+
+
 }
