@@ -21,6 +21,8 @@ model User {
   posts         Post[] 
   comments      Comment[]
   likes         Like[]
+  senders       Relationship[]  @relation(name: "sender")
+  receivers     Relationship[]  @relation(name: "receiver")
 }
 
 model Post {
@@ -67,6 +69,7 @@ model Relationship {
   updatedAt     DateTime    @updatedAt @db.Timestamp(0) 
   senderId      Int
   receiverId    Int
-
+  sender        User    @relation(name: "sender", fields: [senderId], references: [id])
+  receiver      User    @relation(name : "receiver", fields: [receiverId], references: [id])
 
 }
