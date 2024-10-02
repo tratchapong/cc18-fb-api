@@ -4,6 +4,20 @@ const jwt = require('jsonwebtoken')
 const createError = require('../utils/createError')
 const tryCatch = require('../utils/tryCatch')
 
+function checkEmailorPhone(identity) {
+	let identityKey = ''
+	if(/^[0-9]{10,15}$/.test(identity)) {
+		identityKey = 'mobile'
+	}
+	if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(identity)) {
+		identityKey = 'email'
+	}
+	if(!identityKey) {
+		createError(400, 'only email or phone number')
+	}
+	return identityKey
+}
+
 module.exports.register = tryCatch(async (req,res) => {
 	const { identity,firstName, lastName, password, confirmPassword } = req.body
 	// validation
@@ -15,16 +29,7 @@ module.exports.register = tryCatch(async (req,res) => {
 		createError(400,"check confirm Password")
 	}
 	// check identity is mobile or email
-	let identityKey = ''
-	if(/^[0-9]{10,15}$/.test(identity)) {
-		identityKey = 'mobile'
-	}
-	if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(identity)) {
-		identityKey = 'email'
-	}
-	if(!identityKey) {
-		createError(400, 'only email or phone number')
-	}
+	const identityKey = checkEmailorPhone(identity)
 
 	// check if already email / mobile in User data
 
@@ -60,16 +65,7 @@ module.exports.login = tryCatch(async (req, res) => {
 		createError(400, "Please fill all data")
 	}
 	// check identity is mobile or email
-	let identityKey = ''
-	if(/^[0-9]{10,15}$/.test(identity)) {
-		identityKey = 'mobile'
-	}
-	if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(identity)) {
-		identityKey = 'email'
-	}
-	if(!identityKey) {
-		createError(400, 'only email or phone number')
-	}
+	const identityKey = checkEmailorPhone(identity)
 	// find user 
 
 	const findUser = await prisma.user.findUnique({
