@@ -1,13 +1,22 @@
 const prisma = require('../models')
 const tryCatch = require('../utils/tryCatch')
 
-module.exports.register = (req,res) => {
-	res.json('Register Controller...')
-}
+module.exports.register = tryCatch(async (req,res) => {
+	const { identity,firstName, lastName, password, confirmPassword } = req.body
+	// validation
+	if( !(identity.trim() && firstName.trim() && lastName && password && confirmPassword) ) {
+		throw(new Error("Please fill all data"))
+	}
 
-module.exports.login = (req, res) => {
+	if(password !== confirmPassword) {
+		throw(new Error("check confirm Password"))
+	}
+	res.json('Register Controller...')
+})
+
+module.exports.login = tryCatch(async (req, res) => {
 	res.json('Login Controller')
-}
+})
 
 module.exports.getMe = tryCatch(async (req, res) => {
 	const rs = await prisma.user.findMany()
