@@ -6,11 +6,11 @@ module.exports.register = tryCatch(async (req,res) => {
 	const { identity,firstName, lastName, password, confirmPassword } = req.body
 	// validation
 	if( !(identity.trim() && firstName.trim() && lastName && password && confirmPassword) ) {
-		throw(createError(400, "Please fill all data"))
+		createError(400, "Please fill all data")
 	}
 
 	if(password !== confirmPassword) {
-		throw(createError(400,"check confirm Password"))
+		createError(400,"check confirm Password")
 	}
 	res.json('Register Controller...')
 })
