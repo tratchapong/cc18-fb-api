@@ -71,6 +71,7 @@ module.exports.login = tryCatch(async (req, res) => {
 	const findUser = await prisma.user.findUnique({
 		where : { [identityKey] : identity }
 	})
+	console.log(findUser)
 	if(!findUser) {
 		createError(401,'invalid login')
 	}
@@ -85,8 +86,8 @@ module.exports.login = tryCatch(async (req, res) => {
 		id: findUser.id
 	}
 	const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '30d'})	
-
-	res.json({token})
+	const { password : pw, createdAt, updatedAt, ...userData } = findUser
+	res.json({token : token, user: userData})
 })
 
 module.exports.getMe = tryCatch(async (req, res) => {
