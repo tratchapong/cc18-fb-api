@@ -2,9 +2,19 @@ const tryCatch = require("../utils/tryCatch")
 const prisma = require('../models')
 
 
-module.exports.getAllPosts = (req, res) => {
-	res.json('getAllPost')
-}
+module.exports.getAllPosts = tryCatch( async (req,res) => {
+	const rs = await prisma.post.findMany({
+		orderBy : {createdAt : 'desc'},
+		include : {
+			user : { 
+				select : {
+					firstName : true, lastName : true, profileImage : true
+				}
+			},
+		}	
+	})
+	res.json({posts : rs})
+})
 
 module.exports.createPost = tryCatch( async (req, res) => {
 	const {message } = req.body
