@@ -91,7 +91,5 @@ module.exports.login = tryCatch(async (req, res) => {
 })
 
 module.exports.getMe = tryCatch(async (req, res) => {
-	const rs = await prisma.user.findMany()
-	console.log(rs)
-	res.json({result : rs})
+	res.json({user : req.user})
 })
