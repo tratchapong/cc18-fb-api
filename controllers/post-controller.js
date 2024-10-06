@@ -1,5 +1,8 @@
+const fs = require('fs/promises')
+const path = require('path')
 const tryCatch = require("../utils/tryCatch")
 const prisma = require('../models')
+const cloudinary = require("../config/cloudinary")
 
 
 module.exports.getAllPosts = tryCatch( async (req,res) => {
@@ -18,23 +21,35 @@ module.exports.getAllPosts = tryCatch( async (req,res) => {
 
 module.exports.createPost = tryCatch( async (req, res) => {
 	const {message } = req.body
-	console.log(message)
+	const haveFile = !!req.file 
 	console.log(req.file)
-	// const data = { message, userId : req.user.id }
-	// const rs = await prisma.post.create({ data })
-	res.json('create post')
+	let uploadResult = {}
+	if(haveFile) {
+		uploadResult = await cloudinary.uploader.upload(req.file.path, {
+			public_id : path.parse(req.file.path).name
+		})
+		fs.unlink(req.file.path)
+	}
+	const data = {
+		message,
+		image : uploadResult.secure_url || '',
+		userId : req.user.id
+	}
+	const rs = await prisma.post.create({data})
+	res.json(rs)
 })
 
 module.exports.editPost = (req, res) => {
-	const { id } = req.params
-	
+
 	res.json('editPost')
 }
 
-module.exports.deletePost = (req, res) => {
+module.exports.deletePost = tryCatch(async (req, res) => {
 	const { id } = req.params
-
-	res.json('deletePost')
-}
+	const rs = await prisma.post.delete(
+		{where : { id : +id}}
+	)
+	res.json(rs)
+})
 
 
