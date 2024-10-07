@@ -3,6 +3,7 @@ const fs = require('fs/promises')
 const tryCatch = require("../utils/tryCatch")
 const prisma = require('../models')
 const cloudinary = require('../config/cloudinary')
+const createError = require('../utils/createError')
 
 
 module.exports.getAllPosts = tryCatch( async (req,res) => {
@@ -43,6 +44,10 @@ module.exports.createPost = tryCatch( async (req, res) => {
 
 module.exports.deletePost = tryCatch( async (req, res) => {
 	const { id } = req.params
+	const postData = await prisma.post.findUnique({where : {id : +id} })
+	if(!postData.userId === req.user.id) {
+		createError(401, "Cannot delete")
+	}
 	const rs = await prisma.post.delete({
 		where : { id : +id}
 	})
