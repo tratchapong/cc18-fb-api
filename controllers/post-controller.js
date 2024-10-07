@@ -18,9 +18,10 @@ module.exports.getAllPosts = tryCatch( async (req,res) => {
 
 module.exports.createPost = tryCatch( async (req, res) => {
 	const {message } = req.body
-	const data = { message, userId : req.user.id }
-	const rs = await prisma.post.create({ data })
-	res.json(rs)
+	console.log(req.file)
+	// const data = { message, userId : req.user.id }
+	// const rs = await prisma.post.create({ data })
+	res.json(message)
 })
 
 module.exports.editPost = (req, res) => {

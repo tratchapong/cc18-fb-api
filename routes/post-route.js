@@ -1,9 +1,10 @@
 const express = require('express')
 const postRoute = express.Router()
 const postController = require('../controllers/post-controller')
+const upload = require('../middlewares/upload')
 
 postRoute.get('/', postController.getAllPosts)
-postRoute.post('/', postController.createPost)
+postRoute.post('/',upload.single('image'), postController.createPost)
 postRoute.put('/:id',postController.editPost)
 postRoute.delete('/:id',postController.deletePost)
 
