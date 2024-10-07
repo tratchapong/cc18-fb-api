@@ -41,13 +41,15 @@ module.exports.createPost = tryCatch( async (req, res) => {
 	res.json(rs)
 })
 
-module.exports.editPost = (req, res) => {
+module.exports.deletePost = tryCatch( async (req, res) => {
 	const { id } = req.params
-	
-	res.json('editPost')
-}
+	const rs = await prisma.post.delete({
+		where : { id : +id}
+	})
+	res.json(rs)
+})
 
-module.exports.deletePost = (req, res) => {
+module.exports.editPost = (req, res) => {
 	const { id } = req.params
 
 	res.json('deletePost')
