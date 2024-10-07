@@ -5,6 +5,15 @@ const prisma = require('../models')
 const cloudinary = require('../config/cloudinary')
 const createError = require('../utils/createError')
 
+// explain regex + match
+// https://chatgpt.com/c/66f4e56e-6c14-800a-8292-79211e4c2fc8
+
+function getPublicId(url) {
+	const pattern = /\/v\d+\/(.+)\.[a-z]+$/
+	const match = url.match(pattern)
+	console.log(match)
+	return match[1]
+}
 
 module.exports.getAllPosts = tryCatch( async (req,res) => {
 	const rs = await prisma.post.findMany({
@@ -45,7 +54,7 @@ module.exports.createPost = tryCatch( async (req, res) => {
 module.exports.deletePost = tryCatch( async (req, res) => {
 	const { id } = req.params
 	const postData = await prisma.post.findUnique({where : {id : +id} })
-	if(!postData.userId === req.user.id) {
+	if(!postData || !(postData.userId === +req.user.id) ) {
 		createError(401, "Cannot delete")
 	}
 	const rs = await prisma.post.delete({
@@ -54,10 +63,36 @@ module.exports.deletePost = tryCatch( async (req, res) => {
 	res.json(rs)
 })
 
-module.exports.editPost = (req, res) => {
+module.exports.editPost = tryCatch( async (req, res) => {
 	const { id } = req.params
+	const { message }= req.body
 
-	res.json('deletePost')
-}
+	const postData = await prisma.post.findUnique({where : {id : +id} })
+	if(!postData || !(postData.userId === +req.user.id) ) {
+		createError(401, "Cannot update")
+	}
+	const haveFile = !!req.file
+	let uploadResult = {}
+	if(haveFile){
+		uploadResult = await cloudinary.uploader.upload(req.file.path, {
+			public_id : path.parse(req.file.path).name,
+		})
+		fs.unlink(req.file.path)
+		// console.log('***',postData.image)
+		// console.log('***',getPublicId(postData.image))
+		if(postData.image) {
+			cloudinary.uploader.destroy(getPublicId(postData.image))
+		}
+	}	
+	console.log(uploadResult)
+	const data = haveFile 
+	 ? { message, image: uploadResult.secure_url, userId: req.user.id	}
+	 : { message, userId: req.user.id }
+	const rs = await prisma.post.update({
+		where : { id : +id },
+		data : data
+	})
+	res.json(rs)
+})
 
 
