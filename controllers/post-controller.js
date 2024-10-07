@@ -29,8 +29,8 @@ module.exports.createPost = tryCatch( async (req, res) => {
 			overwrite : true,
 			public_id : path.parse(req.file.path).name,
 		})
+		fs.unlink(req.file.path)
 	}
-	fs.unlink(req.file.path)
 	// console.log(uploadResult)
 	const data = {
 		message : message,
