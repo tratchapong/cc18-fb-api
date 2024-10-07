@@ -1,5 +1,8 @@
+const path = require('path')
+const fs = require('fs/promises')
 const tryCatch = require("../utils/tryCatch")
 const prisma = require('../models')
+const cloudinary = require('../config/cloudinary')
 
 
 module.exports.getAllPosts = tryCatch( async (req,res) => {
@@ -18,10 +21,24 @@ module.exports.getAllPosts = tryCatch( async (req,res) => {
 
 module.exports.createPost = tryCatch( async (req, res) => {
 	const {message } = req.body
-	console.log(req.file)
-	// const data = { message, userId : req.user.id }
-	// const rs = await prisma.post.create({ data })
-	res.json(message)
+	// console.log(req.file)
+	const haveFile = !!req.file
+	let uploadResult = {}
+	if(haveFile){
+		uploadResult = await cloudinary.uploader.upload(req.file.path, {
+			overwrite : true,
+			public_id : path.parse(req.file.path).name,
+		})
+	}
+	fs.unlink(req.file.path)
+	// console.log(uploadResult)
+	const data = {
+		message : message,
+		image : uploadResult.secure_url || '',
+		userId : req.user.id
+	}
+	const rs = await prisma.post.create({ data : data})
+	res.json(rs)
 })
 
 module.exports.editPost = (req, res) => {
