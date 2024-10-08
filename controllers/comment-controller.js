@@ -14,6 +14,6 @@ module.exports.createComment = tryCatch(async (req,res) => {
 	const rs = await prisma.comment.create({
 		data : {message, postId, userId}
 	})
-
 	res.json(rs)
 } )
+

@@ -15,7 +15,14 @@ module.exports.createLike = tryCatch( async (req,res) => {
 })
 
 module.exports.deleteLike = tryCatch( async (req,res) => {
-
-	res.json('deleteLike')
+	const {id} = req.params //postId
+	const rs = await prisma.like.delete({
+		where : { userId_postId : {
+			userId : req.user.id,
+			postId : +id
+		}
+	}
+	})
+	res.json(rs)
 })
 
