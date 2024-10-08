@@ -16,6 +16,24 @@ module.exports.getAllPosts = tryCatch( async (req,res) => {
 					firstName : true, lastName : true, profileImage : true
 				}
 			},
+			comments : {
+				include : {
+					user : {
+						select : {
+							firstName : true, lastName : true, profileImage : true
+						}
+					}
+				}
+			},
+			likes : {
+				include : {
+					user : {
+						select : {
+							firstName : true, lastName : true, profileImage : true
+						}
+					}
+				}
+			}
 		}	
 	})
 	res.json({posts : rs})
