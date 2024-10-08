@@ -6,6 +6,7 @@ const errorMiddleware = require('./middlewares/error-middleware')
 const authRoute = require('./routes/auth-route')
 const postRoute = require('./routes/post-route')
 const authenticate = require('./middlewares/authenticate')
+const commentRoute = require('./routes/comment-route')
 
 
 const app = express()
@@ -15,7 +16,7 @@ app.use(express.json())
 
 app.use('/auth', authRoute)
 app.use('/post', authenticate, postRoute)
-app.use('/comment', ()=>{})
+app.use('/comment', authenticate, commentRoute)
 app.use('/like', ()=>{})
 
 app.use(notFound)

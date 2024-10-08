@@ -57,7 +57,7 @@ module.exports.deletePost = tryCatch( async (req, res) => {
 
 module.exports.editPost = tryCatch(async (req, res) => {
 	const { id } = req.params
-	const { message} =req.body
+	const { message } =req.body
 
 	const postData = await prisma.post.findUnique({where : { id : +id}})
 	if(!postData || req.user.id !== postData.userId) {
@@ -74,9 +74,12 @@ module.exports.editPost = tryCatch(async (req, res) => {
 			cloudinary.uploader.destroy(getPublicId(postData.image))
 		}
 	}
-	const data = haveFile 
+  let data = haveFile 
 		? { message, image: uploadResult.secure_url, userId: req.user.id }
 		: { message, userId: req.user.id}
+	
+		// remove pic logic
+	
 	const rs = await prisma.post.update({
 		where : { id : +id},
 		data : data
