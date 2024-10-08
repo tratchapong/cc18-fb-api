@@ -4,6 +4,7 @@ const createError = require("../utils/createError");
 
 module.exports.createLike = tryCatch( async (req,res) => {
 	const {postId} = req.body
+	// validate already like
 	const postData = await prisma.post.findUnique({where : {id : postId} })
 	if(!postData) {
 		createError(401, "Cannot like this post")
@@ -16,6 +17,8 @@ module.exports.createLike = tryCatch( async (req,res) => {
 
 module.exports.deleteLike = tryCatch( async (req,res) => {
 	const {id} = req.params //postId
+
+	// validate already unlike
 	const rs = await prisma.like.delete({
 		where : { userId_postId : {
 			userId : req.user.id,
