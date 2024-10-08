@@ -1,5 +1,6 @@
 const tryCatch = require("../utils/tryCatch");
-const prisma = require('../models')
+const prisma = require('../models');
+const createError = require("../utils/createError");
 
 
 module.exports.createComment = tryCatch(async (req,res) => {
@@ -8,7 +9,7 @@ module.exports.createComment = tryCatch(async (req,res) => {
 	// validation
 	const postData = await prisma.post.findUnique({where : {id : postId} })
 	if(!postData) {
-		createError(401, "Cannot delete")
+		createError(401, "Cannot create comment")
 	}
 	const rs = await prisma.comment.create({
 		data : {message, postId, userId}
