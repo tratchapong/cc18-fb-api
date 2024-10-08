@@ -5,7 +5,7 @@ const upload = require('../middlewares/upload')
 
 postRoute.get('/', postController.getAllPosts)
 postRoute.post('/',upload.single('image'), postController.createPost)
-postRoute.put('/:id',postController.editPost)
+postRoute.put('/:id',upload.single('image'),postController.editPost)
 postRoute.delete('/:id',postController.deletePost)
 
 module.exports = postRoute
