@@ -17,7 +17,7 @@ CLOUDINARY_API_SECRET
 |post|/auth/register|-|-|-|{ identity,firstName, lastName, password, confirmPassword }
 |post|/auth/login|-|-|-|{ identity, password }
 |get|/auth/me|y|-|-|-|
-|get|/post|y|-|-|-|
+|get|/post|y|-|page, perPage|-|
 |post|/post|y|-|-|{message, image(file)}
 |put|/post|y|:id|-|{message, image(file)}
 |delete|/post|y|:id|-|-
