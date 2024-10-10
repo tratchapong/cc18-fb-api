@@ -71,7 +71,7 @@ module.exports.login = tryCatch(async (req, res) => {
 	const findUser = await prisma.user.findUnique({
 		where : { [identityKey] : identity }
 	})
-	console.log(findUser)
+	// console.log(findUser)
 	if(!findUser) {
 		createError(401,'invalid login')
 	}

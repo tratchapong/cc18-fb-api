@@ -82,7 +82,7 @@ module.exports.deletePost = tryCatch( async (req, res) => {
 module.exports.editPost = tryCatch(async (req, res) => {
 	const { id } = req.params
 	const { message, removePic } =req.body
-	console.log(req.body)
+	// console.log(req.body)
 
 	const postData = await prisma.post.findUnique({where : { id : +id}})
 	if(!postData || req.user.id !== postData.userId) {
