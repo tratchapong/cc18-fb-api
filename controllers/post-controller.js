@@ -40,7 +40,9 @@ module.exports.getAllPosts = tryCatch( async (req,res) => {
 			}
 		},	
 	})
-	res.json({posts : rs})
+
+	const rows = await prisma.post.count()
+	res.json({posts : rs, rows })
 })
 
 module.exports.createPost = tryCatch( async (req, res) => {
