@@ -8,11 +8,11 @@ const getPublicId = require('../utils/getPublicId')
 
 
 module.exports.getAllPosts = tryCatch( async (req,res) => {
-	const {page=1, perPage=5} = req.query
+	const {skip, perPage=3} = req.query
 	// console.log(page,perPage)
 	const rs = await prisma.post.findMany({
 		orderBy : {createdAt : 'desc'},
-		skip : (+page - 1) * +perPage,
+		skip : +skip,
 		take : +perPage ,
 		include : {
 			user : { 
