@@ -17,7 +17,7 @@ CLOUDINARY_API_SECRET
 |post|/auth/register|-|-|-|{ identity,firstName, lastName, password, confirmPassword }
 |post|/auth/login|-|-|-|{ identity, password }
 |get|/auth/me|y|-|-|-|
-|get|/post|y|-|page, perPage|-|
+|get|/post|y|-|skip, perPage|-|
 |post|/post|y|-|-|{message, image(file)}
 |put|/post|y|:id|-|{message, image(file)}
 |delete|/post|y|:id|-|-
@@ -28,7 +28,7 @@ CLOUDINARY_API_SECRET
 
 ---
 ## Note
-## create route & controller for /post (16:10)
+
 
 
 
