@@ -3,8 +3,8 @@ const prisma = require('../models')
 
 async function run() {
 	try{
-		await prisma.$executeRawUnsafe('DROP DATABASE cc18_fakebook_2')
-		await prisma.$executeRawUnsafe('CREATE DATABASE cc18_fakebook_2')
+		await prisma.$executeRawUnsafe('DROP DATABASE the_fakebook')
+		await prisma.$executeRawUnsafe('CREATE DATABASE the_fakebook')
 	}catch(err){
 		console.log(err)
 	}

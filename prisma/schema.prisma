@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,8 +16,8 @@ model User {
   password      String      
   profileImage  String?
   coverImage    String?
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @updatedAt @db.Timestamp(0) 
+  createdAt     DateTime    @default(now())  // Removed @db.Timestamp(0) as PostgreSQL handles timestamps differently
+  updatedAt     DateTime    @updatedAt
   posts         Post[] 
   comments      Comment[]
   likes         Like[]
@@ -29,32 +29,40 @@ model Post {
   id            Int         @id @default(autoincrement())
   message       String?     @db.Text
   image         String?
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @updatedAt @db.Timestamp(0)  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   userId        Int
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments      Comment[]
   likes         Like[]
+
+  @@index([userId])
 }
 
 model Comment {
   id            Int         @id @default(autoincrement())
   message       String      @db.Text
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @updatedAt @db.Timestamp(0)  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   userId        Int
   postId        Int
-  user          User        @relation(fields: [userId], references: [id])
-  post          Post        @relation(fields: [postId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([postId])
 }
 
 model Like {
   userId        Int
   postId        Int
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  user          User        @relation(fields: [userId], references: [id])
-  post          Post        @relation(fields: [postId], references: [id])
+  createdAt     DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+
   @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
 }
 
 enum RelationshipStatus {
@@ -63,13 +71,15 @@ enum RelationshipStatus {
 }
 
 model Relationship {
-  id            Int         @id @default(autoincrement())
-  status        RelationshipStatus   @default(PENDING)
-  createdAt     DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt     DateTime    @updatedAt @db.Timestamp(0) 
+  id            Int                 @id @default(autoincrement())
+  status        RelationshipStatus  @default(PENDING)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
   senderId      Int
   receiverId    Int
-  sender        User    @relation(name: "sender", fields: [senderId], references: [id])
-  receiver      User    @relation(name : "receiver", fields: [receiverId], references: [id])
+  sender        User                @relation(name: "sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver      User                @relation(name: "receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
+  @@index([senderId])
+  @@index([receiverId])
 }
